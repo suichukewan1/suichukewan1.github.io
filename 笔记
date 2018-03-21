@@ -1,0 +1,1 @@
+//如果父有border-top则子元素margin相对父元素，如果父元素没有border-top则子元素margin相对标准·文档流上一个元素。

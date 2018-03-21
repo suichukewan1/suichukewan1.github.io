@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>在父元素没有高度的情况下 浮动会造成父元素塌陷，反之不会，但是在父元素没有高度的情况下，给父元素添加一个超出隐藏就不会造成父元素塌陷</title>
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<style type="text/css">
+    body {
+        margin: 0px;
+        padding: 0px;
+        font-family: "微软雅黑";
+    }
+
+    input {
+        font-family: "微软雅黑";
+    }
+
+    ::selection {
+        color: white;
+        background-color: #ea4c89;
+        text-decoration: none;
+    }
+
+    .wrapper {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    /*头部*/
+    .head {
+        width: 100%;
+        height: 250px;
+        background-position: 50% 0px;
+        background: url("images/headbanner.jpg");
+        background-size: contain;
+        background-attachment: fixed; /*fixed: 随着页面的滚动轴背景图片不会移动*/
+        /*position: relative;*/
+        z-index: -1;
+    }
+
+    /*头部说明*/
+    #head-caption {
+        position: fixed;
+        top: 30px;
+        width: 100%;
+        margin: 50px auto;
+        z-index: 1;
+    }
+
+    #head-caption img {
+        display: block;
+        width: 80px;
+        margin: 0 auto;
+    }
+
+    #head-caption p {
+        font-size: 14px;
+        color: white;
+        margin: 6px auto;
+        text-align: center;
+    }
+
+    /*头部说明*/
+    /*导航*/
+    #nav {
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        height: 50px;
+        position: fixed;
+        z-index: 50;
+    }
+
+    .nav-content {
+        width: 1260px;
+        margin: 0 auto;
+    }
+
+    .nav-content ul {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .nav-content ul li:first-of-type {
+        margin-right: 70px;
+    }
+
+    .nav-content > ul > li {
+        width: 100px;
+        list-style: none;
+        font-size: 14px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        float: left;
+        margin-right: 10px;
+        cursor: pointer;
+        color: rgba(255, 255, 255, .8);
+        overflow: hidden;
+        -webkit-transition: color 0.5s linear;
+    }
+
+    .nav-content > ul > li:nth-of-type(7):hover {
+        height: 110px;
+        /*background-color: rgba(0,0,0,0.5);*/
+    }
+
+    .nav-content > ul > li:nth-of-type(7):hover ul li {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-content > ul > li > ul > li {
+        list-style: none;
+        width: 100px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 12px;
+    }
+
+    .nav-content > ul > li:hover {
+        color: rgba(255, 255, 255, .5);
+    }
+
+    .nav-content > ul > li:hover ul li {
+        color: rgba(255, 255, 255, .8);
+    }
+
+    .nav-content > ul > li > ul > li:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #00A398;
+    }
+
+    /*导航*/
+    /*搜索框*/
+    #searchhidden {
+        width: 0px;
+        overflow: visible;
+        /*-webkit-transition:all 5s linear;*/
+        float: right;
+    }
+
+    #searchhidden span {
+        color: rgba(255, 255, 255, .5);
+        position: absolute;
+        z-index: 10;
+        right: 180px;
+        top: 18px;
+    }
+
+    #searchhidden input {
+        width: 0px;
+        height: 30px;
+        border: 0px;
+        padding: 0px;
+        position: absolute;
+        top: 10px;
+        /*left:1030px;*/
+        right: 200px;
+        opacity: 0;
+        /*-webkit-transition:all 5s linear;*/
+    }
+
+    #search {
+        width: 180px;
+        margin-top: 10px;
+        background-color: white;
+        height: 30px;
+        color: rgba(255, 255, 255, .8);
+        border-radius: 3px;
+        /*overflow: hidden;*/
+        float: right;
+        -webkit-transition: width .3s linear;
+    }
+
+    #search span {
+        color: rgba(0, 0, 0, .5);
+        position: absolute;
+        /*left:1000px;*/
+        right: 340px;
+        z-index: 10;
+        top: 18px;
+        -webkit-transition: all .3s linear;
+
+    }
+
+    #search input {
+        opacity: 1;
+        width: 130px;
+        height: 30px;
+        border: 0px;
+        padding: 0px;
+        position: absolute;
+        top: 10px;
+        right: 200px;
+        /*float:right;*/
+        font-size: 16px;
+        color: #333;
+        -webkit-transition: width .4s linear, opacity 1.3s linear;
+    }
+
+    #search input:focus {
+        outline: none;
+        border: none;
+    }
+
+    /*搜索框*/
+    /*登陆注册*/
+    #navlogin {
+        width: 112px;
+        height: 30px;
+        margin-top: 10px;
+        border-radius: 5px;
+        float: right;
+        /*background-color: rgba(255,255,255,0.5);*/
+    }
+
+    #navlogin div {
+        width: 55px;
+        height: 30px;
+        margin-right: 1px;
+        line-height: 30px;
+        font-size: 13px;
+        /*border-radius: 3px;*/
+        background-color: rgba(255, 255, 255, 0.2);
+        float: left;
+    }
+
+    #navlogin div:hover {
+        color: rgba(255, 255, 255, .5);
+    }
+
+    #navlogin:hover {
+        color: rgba(255, 255, 255, .8);
+    }
+
+    /*登陆注册*/
+    /*登陆注册框*/
+    #login-reg-form {
+        width: 400px;
+        position: absolute;
+        left: 480px;
+        top: -800px;
+        overflow: hidden;
+        -webkit-transition: top 0.3s linear;
+    }
+
+    #loginpage, #regpage {
+        width: 350px;
+        padding-left: 50px;
+        font-size: 12px;
+        background-color: white;
+        margin: 30px auto;
+        position: absolute;
+        display: none;
+        top: 30px;
+        z-index: 99;
+    }
+
+    #loginpage h1, #regpage h1 {
+        font-size: 18px;
+        font-weight: normal;
+    }
+
+    .closebtn {
+        width: 50px;
+        height: 55px;
+        font-size: 15px;
+        border-radius: 0 0 50px 50px;
+        background: #444;
+        position: relative;
+        text-align: center;
+        left: 270px;
+        cursor: pointer;
+    }
+
+    .closebtn span {
+        line-height: 50px;
+        color: white;
+        -webkit-transition: all 0.3s linear;
+    }
+
+    .closebtn:hover span {
+        -webkit-transform: rotate(180deg);
+    }
+    .login-reg-switch{
+        color:#999;
+        cursor: pointer;
+    }
+    .login-reg-switch span{
+        color:#ea4c89;
+    }
+    .signform
+    {
+        width:300px;
+        color: #999;
+    }
+    .signform span{
+        position: relative;
+        top:10px;
+        left:275px;
+        color:rgba(0,0,0,.3);
+        font-size:20px;
+    }
+    .signform input[type="text"], .signform input[type="password"]{
+        font-family: "微软雅黑";
+        width:300px;
+        height:40px;
+        border:1px solid #ddd;
+        outline:0;
+        margin-top: -20px;
+        margin-bottom: 10px;
+    }
+    .signform input[type="checkbox"]{
+        vertical-align: middle;
+    }
+    .signform a{
+        text-decoration: none;
+        color:#00c3b6;
+        float:right;
+    }
+    .signform input[type="button"]{
+        width:300px;
+        height:40px;
+        background-color: #00c3b6;
+        border: 0px;
+        color:white;
+        font-family:"微软雅黑";
+        outline:0px;
+        font-size: 15px;
+        margin-top:10px;
+        cursor: pointer
+    }
+    .qqlogin{
+        height:100px;
+        margin:20px auto;
+        border-top:1px solid #ddd;
+        cursor: pointer;
+    }
+    .qqlogin p{
+        color:#333;
+    }
+    .qqloginlogo{
+        width:105px;
+        height:30px;
+        line-height:30px;
+        text-align: center;
+        background-color:#4a9cf8;
+
+        color:white;
+    }
+    #cover{
+        position: absolute;
+        -webkit-transition:all .2s linear;
+    }
+    /*登陆注册框*/
+    /*公告栏*/
+    .notice {
+        width: 100%;
+        height: 50px;
+        background-color: #F1F1F1;
+        position: relative;
+        z-index: 5;
+    }
+
+    .notice ul {
+        margin: 0px;
+        /*padding:0px;*/
+    }
+
+    /*引入的文件把其变成了行内块级元素*/
+    .notice span {
+        color: #888;
+        line-height: 50px;
+        float: left;
+        margin-left: 45px;
+        margin-right: 15px;
+    }
+
+    .notice ul li {
+        color: #888;
+        line-height: 50px;
+        float: left;
+        list-style: none;
+        font-size: 12px;
+        margin-right: 4%;
+        display: inline-block;
+        cursor: pointer;
+        -webkit-transition: color .5s linear;
+    }
+
+    .notice ul li:hover {
+        color: #00c3b6;
+        text-decoration: underline;
+    }
+
+    /*notice end*/
+    /*content*/
+    .content {
+        width: 100%;
+        height: 1500px;
+        background-color: #F1F1F1;
+        position: relative;
+        z-index: 5;
+    }
+
+    /*Slidebox Row*/
+    .sliderrow {
+        width: 100%;
+        height: 280px;
+        margin: 20px auto; /*使得父元素content距离notice20px如果没有其他元素则是距离body20px*/
+        background-color: white;
+    }
+
+    .sliderow-inner {
+        width: 1300px;
+        height: 250px;
+        margin: 30px auto; /*使得父元素content距离notice30px如果没有其他元素则是距离body30px*/
+    }
+
+    #sliderow-slidebox {
+        margin-left: 20px;
+        width: 620px;
+        height: 250px;
+        overflow: hidden;
+        float: left;
+    }
+
+    #sliderow-slidecontent {
+        width: 3100px;
+        cursor: pointer;
+        -webkit-transition: all 0.3s linear;
+        font-size: 0px;
+    }
+
+    #slidebox-leftarrow, #slidebox-rightarrow {
+        width: 35px;
+        height: 50px;
+        text-align: center;
+        background-color: rgba(0, 0, 0, 0.7);
+        position: relative;
+        top: -170px;
+        left: -50px;
+        border-radius: 0 3px 3px 0;
+        cursor: pointer;
+        -webkit-transition: all 0.3s linear;
+    }
+
+    #slidebox-leftarrow span, #slidebox-rightarrow span {
+        line-height: 50px;
+        font-weight: bold;
+        color: white;
+        font-size: 26px;
+    }
+
+    #slidebox-rightarrow {
+        left: 635px;
+        top: -220px;
+        border-radius: 3px 0px 0px 3px;
+    }
+
+    #slidebox-leftarrow:hover, #slidebox-rightarrow:hover {
+        background-color: #00c3b6;
+    }
+
+    #slidebox-switch {
+        width: 75px;
+        /*height:5px;*/
+        position: relative;
+        top: -25px;
+        z-index: 10;
+        margin-left: auto;
+        margin-right: auto;
+        /*background-color: blue;*/
+    }
+
+    .switch-icons {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 6px;
+        border: 1px solid white;
+        margin-left: 2px;
+        cursor: pointer;
+    }
+
+    .sliderow-small {
+        margin-left: 20px;
+        float: left;
+    }
+
+    /*Slidebox Row*/
+    /*ContentRow*/
+    .contentrow {
+        width: 1260px;
+        height: 260px;
+        margin: 15px auto;
+    }
+
+    .contentrow-box {
+        width: 305px;
+        height: 260px;
+        background-color: white;
+        overflow: hidden;
+        float: left;
+        margin-right: 10px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+    }
+
+    .contentrow-box-upper {
+        width: 280px;
+        border: 10px solid white; /*这10px导致图片外面的白色*/
+        cursor: pointer;
+        margin: 0 auto;
+    }
+
+    .contentrow-box-upper p {
+        font-size: 10px;
+        color: #888;
+        margin: 0px;
+        margin-top: 5px;
+
+    }
+
+    .contentrow-box-lower {
+        width: 280px;
+        height: 30px;
+        margin: 0 auto;
+        border-top: 1px solid #ccc;
+    }
+
+    .boxtimestamp {
+        line-height: 30px;
+        color: #888;
+        font-size: 12px;
+    }
+
+    .boxcomments {
+        float: right;
+        line-height: 30px;
+        color: #888;
+        font-size: 12px;
+        word-spacing: 3px;
+    }
+
+    .contentrow-box-add {
+        position: relative;
+        width: 280px;
+        height: 0px;
+        overflow: hidden;
+        left: 12px;
+        background-color: #222;
+        font-size: 13px;
+        color: white;
+        -webkit-transition: all .2s linear;
+    }
+
+    .contentrow-box-add span {
+        display: inline-block;
+        margin-left: 5px;
+        line-height: 30px;
+    }
+
+    .contentrow-box-add .fire {
+        float: right;
+        margin-right: 10px;
+    }
+
+    .contentrow-box-upper-img {
+        overflow: hidden;
+        height: 180px;
+        width: 280px;
+    }
+
+    .contentrow-box-upper img {
+        -webkit-transition: all 0.3s linear;
+    }
+
+    .fa-comment {
+        cursor: pointer;
+    }
+
+    .fa-comment:hover {
+        color: #00c3b6;
+    }
+
+    .contentrow-box:hover .contentrow-box-upper > p {
+        color: #00c3b6;
+    }
+
+    .contentrow-box:hover .contentrow-box-add {
+        top: -242px;
+        height: 30px;
+    }
+
+    .contentrow-box:hover .contentrow-box-upper img {
+        -webkit-transform: translateY(5px);
+        /*opacity: 0.9;*/
+        -webkit-filter: brightness(.8);
+    }
+
+    /*ContentRow*/
+    /*Number Page*/
+    .numberpage {
+        width: 380px;
+        height: 35px;
+        margin: 10px auto;
+    }
+
+    .numberpage span {
+        display: inline-block;
+        margin: 0 10px;
+        font-size: 13px;
+        color: #999;
+    }
+
+    .numbers {
+        width: 35px;
+        height: 35px;
+        border-radius: 5px;
+        background-color: white;
+        /*float:left;*/
+        display: inline-block;
+        color: #999;
+        line-height: 35px;
+        text-align: center;
+        font-size: 13px;
+        margin-right: 5px;
+        cursor: pointer;
+        -webkit-transition: all 0.3s linear;
+    }
+
+    .numbers span {
+        line-height: 35px;
+        text-align: center;
+    }
+
+    .enternumber {
+        width: 90px;
+        height: 35px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .enternumber input {
+        width: 45px;
+        height: 35px;
+        border: 0px;
+        outline: 0px;
+        text-align: center;
+        color: #999;
+    }
+
+    .numbersgo {
+        margin-right: 0px;
+        width: 38px;
+        height: 36px;
+        display: inline-block;
+        color: #999;
+        line-height: 35px;
+        text-align: center;
+        font-size: 13px;
+        cursor: pointer;
+
+    }
+
+    .numbers:hover, .numbersgo:hover {
+        background-color: #00c3b6;
+        color: white;
+    }
+
+    .enternumber input:focus + .numbersgo {
+        background-color: #00c3b6;
+        color: white;
+    }
+
+    /*Number Page*/
+    /*full pic*/
+    .fullpic {
+        width: 100%;
+        height: 600px;
+        padding-top: 5px;
+        background-position: center bottom;
+        background-image: url("Images/fullpicbg.jpg"); /*默认是从顶部左部出来， 如果单独bottom或者top都是从bottom或者top中间出来，如果center直接以中心开始填充 bottom与center合起来没用*/
+    }
+
+    .fullpicrow {
+        width: 1260px;
+        height: 262px;
+        margin: 0 auto;
+
+    }
+
+    .fullpic-box {
+        width: 315px;
+        height: 262px;
+        float: left;
+        cursor: pointer;
+        font-size: 0px; /*解决图片img与其他元素之间的空格*/
+    }
+
+    .fullpic-box img {
+        width: 315px;
+        height: 262px;
+    }
+
+    .fullpic-box-layer {
+        width: 315px;
+        height: 262px;
+        position: relative;
+        top: -262px;
+        visibility: hidden;
+    }
+
+    .fullpic-box-toplay {
+        height: 210px;
+        background-color: rgba(0, 192, 165, .6);
+        text-align: center;
+        /*position:relative;*/
+    }
+
+    .fullpic-box-toplay span {
+        color: rgba(0, 0, 0, 0);
+        font-size: 100px;
+        line-height: 210px;
+        -webkit-transition: all 0.2s ease-in;
+    }
+
+    .fullpic-box:hover .fullpic-box-layer {
+        visibility: visible;
+    }
+
+    .fullpic-box:hover .fullpic-box-layer .fullpic-box-toplay span {
+        color: white;
+        font-size: 40px;
+    }
+
+    .fullpic-box-botlay {
+        height: 52px;
+        background-color: rgba(22, 99, 96, .6);
+    }
+
+    .fullpic-box-botlay p {
+        color: white;
+        margin: 0px;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+
+    .fullpic-box-botlay > span {
+        margin-left: 5px;
+        color: #ccc;
+    }
+
+    .fullpicbtn {
+        width: 260px;
+        height: 40px;
+        background-color: #00c3b6;
+        margin: 20px auto;
+        color: white;
+        line-height: 40px;
+        text-align: center;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        -webkit-transition: all 0.2s ease-in;
+    }
+
+    .fullpicbtn:hover {
+        background-color: #ea4c89;
+    }
+
+    /*full pic*/
+    /*Icon Row*/
+    .iconsrow {
+        height: 260px;
+        width: 1260px;
+        margin: 0 auto;
+    }
+
+    .iconsbox {
+        width: 260px;
+        margin: 35px 80px;
+        text-align: center;
+        float: left;
+    }
+
+    .icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 100px;
+        background-color: #00A398;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .icon span {
+        line-height: 100px;
+        color: white;
+        font-size: 35px;
+    }
+
+    .iconsbox h2 {
+        font-weight: normal;
+        font-size: 18px;
+        color: #00c3b6;
+    }
+
+    .iconsbox p {
+        font-size: 12px;
+        color: #333;
+    }
+
+    /*icon box end*/
+    /*adrow*/
+    .adrow {
+        width: 100%;
+        height: 200px;
+        background-color: #F1F1F1;
+    }
+
+    .adrow div {
+        width: 336px;
+        height: 200px;
+        /*background-color: red;*/
+        float: left;
+    }
+
+    .adrow div:nth-child(1) {
+
+        background-image: url("images/f1.jpg");
+        background-position: center center;
+    }
+
+    .adrow div:nth-child(2) {
+        background-image: url("images/f2.jpg");
+        background-position: center center;
+    }
+
+    .adrow div:nth-child(3) {
+
+        background-image: url("images/f3.jpg");
+        background-position: center center;
+    }
+
+    .adrow div:nth-child(4) {
+        background-image: url("images/f4.jpg");
+        background-position: center center;
+    }
+
+    /*adrow*/
+    /*Footer*/
+    .footer {
+        background-color: #222;
+        color: #666;
+        width: 100%;
+        height: 250px;
+        font-size: 12px;
+    }
+
+    .footer-left {
+        float: left;
+        width: 433px;
+        margin-left: 50px;
+        margin-right: 70px;
+    }
+
+    .footer-left p {
+        line-height: 20px;
+        letter-spacing: 1px;
+    }
+
+    .footer h5 {
+        color: #ccc;
+        font-size: 15px;
+        font-weight: normal;
+        margin-bottom: 10px;
+    }
+
+    .footer-col {
+        float: left;
+        margin-right: 70px;
+    }
+
+    .footer-col ul {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .footer-col ul li {
+        height: 25px;
+        list-style: none;
+        cursor: pointer;
+    }
+
+    .footer-col ul li:hover {
+        text-decoration: underline;
+        color: white;
+    }
+
+    .footer-col ul li input[type="text"] {
+        width: 165px;
+        height: 26px;
+        background-color: #222;
+        border: 1px solid #333;
+        outline: 0px;
+        color: #666;
+        margin-right: 5px;
+    }
+
+    .footer-col ul li input[type="button"] {
+        width: 48px;
+        height: 30px;
+        line-height: 30px;
+        background-color: #31b0d5;
+        color: #666;
+        background-color: #00c3b6;
+        color: #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+        border: 0;
+        outline: 0px; /*轮廓属性*/
+    }
+
+    .footer-col ul li input[type="button"]:hover {
+        color: white;
+    }
+
+    .footer-share {
+        margin-top: 20px;
+    }
+
+    .footer-share > span {
+        display: inline-block;
+        margin-right: 5px;
+        width: 30px;
+        height: 30px;
+        border-radius: 3px;
+        background-color: #1B1B1B;
+        line-height: 30px;
+        text-align: center;
+        font-size: 15px;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        -webkit-transition: all 0.2s ease-in;
+    }
+
+    .footer-share span:nth-child(1):hover {
+        background-color: #79ac21;
+    }
+
+    .footer-share span:nth-child(2):hover {
+        background-color: #ff664e;
+    }
+
+    .footer-share span:nth-child(3):hover {
+        background-color: #e05fef;
+    }
+
+    .footer-share span:nth-child(4):hover {
+        background-color: #00c3f4;
+    }
+
+    .footer-share span:nth-child(5):hover {
+        background-color: #f39c12;
+    }
+
+    .footercopyright {
+        width: 1260px;
+        height: 50px;
+        float: left;
+        margin-left: 50px;
+        border-top: 1px solid rgba(255, 255, 255, .065);
+    }
+
+    #myname {
+        float: right;
+        margin-top: -30px;
+        cursor: pointer;
+        -webkit-transition: all 0.8s linear;
+    }
+
+    #myname:hover {
+        color: #ff88ee;
+    }
+
+    #oye {
+        position: relative;
+        color: #333;
+        font-weight: bold;
+        left: 1058px;
+        width: 60px;
+        height: 50px;
+        top: -95px;
+        padding-top: 10px;
+        text-align: center;
+        background-color: #ea4c89;
+        border-radius: 20px;
+        opacity: 0; /*透明度*/
+        -webkit-transition: all 0.5s ease-out;
+    }
+
+    #oye:after {
+        content: "\25BC";
+        position: relative;
+        top: 7px;
+        left: 0px;
+        font-size: 14px;
+        color: #ea4c89;
+    }
+
+    #myname:hover + #oye {
+        opacity: 1;
+        z-index: 10;
+    }
+
+    /*footer end*/
+    /*content end*/
+    /*回到顶部*/
+    #backtotop {
+        width: 40px;
+        height: 40px;
+        float: right;
+        background-color: rgba(0, 0, 0, .7);
+        text-align: center;
+        position: fixed;
+        z-index: 80;
+        bottom: 20px;
+        left: 1290px;
+    / / opacity: 0;
+        border-radius: 3px;
+        -webkit-transition: all 1s linear;
+    }
+
+    #backtotop span {
+        cursor: pointer;
+        line-height: 40px;
+        font-size: 20px;
+        color: #ccc;
+    }
+
+    /*对到顶部*/
+</style>
+<body onscroll="scrollshow()">
+<div id="login-reg-form">
+    <div id="loginpage">
+        <div class="closebtn">
+            <span class="fa fa-times" onclick="closeform()"></span>
+        </div>
+        <div class="login-reg-switch" id="logtoreg" onclick="switchlog(this)">
+            <span class="fa fa-toggle-on"></span>
+            切换注册
+        </div>
+        <h1>登录</h1>
+        <form action="" class="signform">
+            <span class="fa fa-user"></span>
+            <input type="text" id="username" placeholder=" 请输入用户名">
+            <span class="fa fa-lock"></span>
+            <input type="password" id="password" placeholder=" 请输入密码">
+            <input type="checkbox">记住我的登录
+            <a href="#">忘记密码?</a>
+            <input type="button" value="登录">
+        </form>
+        <div class="qqlogin">
+            <p>您也可以使用第三方帐号登录</p>
+            <div class="qqloginlogo">
+                <span class="fa fa-qq"></span>
+                QQ账号登录
+            </div>
+        </div>
+    </div>
+    <div id="regpage">
+        <div class="closebtn">
+            <span class="fa fa-times" onclick="closeform()"></span>
+        </div>
+        <div class="login-reg-switch" id="regtolog" onclick="switchlog(this)">
+            <span class="fa fa-toggle-off"></span>
+            切换登录
+        </div>
+        <h1>注册</h1>
+        <form action="" class="signform">
+            <span class="fa fa-user"></span>
+            <input type="text" id="usernamereg" placeholder=" 输入英文用户名">
+            <span class="fa fa-envelope"></span>
+            <input type="text" id="mail" placeholder=" 输入常用邮箱">
+            <span class="fa fa-lock"></span>
+            <input type="password" id="passwordreg" placeholder=" 密码最小长度为6">
+            <span class="fa fa-lock"></span>
+            <input type="password" id="reenterpwd" placeholder=" 再次输入密码">
+            <input type="button" value="注册">
+        </form>
+        <div class="qqlogin">
+            <p>您也可以使用第三方帐号登录</p>
+            <div class="qqloginlogo">
+                <span class="fa fa-qq"></span>
+                QQ账号登录
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div id="cover">
+
+</div>
+<div class="wrapper">
+    <div class="head" id="top">
+        <div id="nav">
+            <div class="nav-content">
+                <ul>
+                    <li style="width:150px;"><img src="images/logo.png" alt=""></li>
+                    <li>文章</li>
+                    <li>欣赏</li>
+                    <li>素材</li>
+                    <li>商店</li>
+                    <li>灵感</li>
+                    <li>更多
+                        <ul id="submenu">
+                            <li>关于觉唯</li>
+                            <li>留言联系</li>
+                        </ul>
+                    </li>
+                    <li id="navlogin">
+                        <div onclick="formpopup(this)" id="form1">登录</div>
+                        <div onclick="formpopup(this)" id="form2">注册</div>
+                    </li>
+                    <li id="searchhidden">
+                        <span class="fa fa-search" onclick="searchbox()"></span>
+                        <input type="text" id="texttest" onblur="searchboxblur()">
+                    </li>
+                </ul>
+            </div>
+        </div><!--Nav END-->
+    </div> <!--Head END-->
+    <div id="head-caption">
+        <img src="images/innerlogo.png" alt="说明文字">
+        <p>觉唯体验设计</p>
+        <p style="font-size:12px;">juewei experience design.</p>
+    </div>  <!--head caption（说明）end-->
+    <div class="notice">
+        <span class="fa fa-bullhorn"></span>
+        <ul>
+            <li title="新增个人主页展示，越看越有爱">[12-11] 新增个人主页展示，越看越有爱</li>
+            <li title="觉唯新版升级上线">[12-04] 觉唯新版升级上线</li>
+            <li title="QQ一键登录上线">[09-01] QQ一键登录上线</li>
+            <li title="觉唯商城Beta版测试上线">[08-12] 觉唯商城Beta版测试上线</li>
+            <li title="觉唯博客主题发布1.3版本">[11-29] 觉唯博客主题发布1.3版本</li>
+        </ul>
+    </div><!--公告栏notice END-->
+    <div class="content">
+        <div class="sliderrow">
+            <div class="sliderow-inner">
+                <div id="sliderow-slidebox" onmouseover="pause()" onmouseout="restart()">
+                    <div id="sliderow-slidecontent">
+                        <img src="Images/slide1.png" title="纯CSS3制作ioS7风格进度条">
+                        <img src="Images/slide2.png" title="Swiper slider 具有硬件加速的移动端触摸滑块插件">
+                        <img src="Images/slide3.jpg" title="Tatiana Kaplun 2015欧美优雅复古宫廷婚纱系列">
+                        <img src="Images/slide4.png" title="超棒！优美的扁平iOS应用程序APP图标设计">
+                        <img src="Images/slide5.jpg" title="奇妙的几何多边形illustration矢量插图">
+                    </div>
+                    <div id="slidebox-switch">
+                        <div class="switch-icons" onclick="switchslide(0)"></div>
+                        <div class="switch-icons" onclick="switchslide(1)"></div>
+                        <div class="switch-icons" onclick="switchslide(2)"></div>
+                        <div class="switch-icons" onclick="switchslide(3)"></div>
+                        <div class="switch-icons" onclick="switchslide(4)"></div>
+                    </div>
+                    <div id="slidebox-leftarrow" onclick="moveleft()">
+                        <span class="fa fa-angle-left"></span>
+                    </div>
+                    <div id="slidebox-rightarrow">
+                        <span class="fa fa-angle-right" onclick="moveright()"></span>
+                    </div>
+                </div>
+                <div class="sliderow-small">
+                    <img src="images/p1.jpg">
+                </div>
+                <div class="sliderow-small">
+                    <img src="images/ads.jpg">
+                </div>
+            </div>
+        </div><!--Sliderow END-->
+        <!--Content Row -->
+        <!--第一行-->
+        <div class="contentrow">
+            <!--ContentRow Box 第1行第1个-->
+            <div class="contentrow-box">
+                <div class="contentrow-box-upper">
+                    <div class="contentrow-box-upper-img">
+                        <img src="images/p2.jpg" title="AirPano Travel Book 旅游景点3D图像设计">
+                    </div>
+                    <p>AirPano Travel Book 旅游景点3D图像设计</p>
+                </div>
+                <div class="contentrow-box-lower">
+                        <span class="boxtimestamp">
+                            3天前
+                        </span>
+                        <span class="boxcomments">
+                            <span class="fa fa-heart"> 5</span>
+                            <span class="fa fa-comment"> 0</span>
+                        </span>
+                </div>
+                <div class="contentrow-box-add">
+                    <span><span class="fa fa-bookmark"></span> 3D艺术</span>
+                    <span class="fire">770 <span class="fa fa-fire"></span></span>
+                </div>
+            </div><!--ContentBox END-->
+            <!--ContentRow Box 第1行第2个-->
+            <div class="contentrow-box">
+                <div class="contentrow-box-upper">
+                    <div class="contentrow-box-upper-img">
+                        <img src="images/p3.gif" title="精美酷炫的APP动态UI交互设计效果图">
+                    </div>
+                    <p>精美酷炫的APP动态UI交互设计效果图</p>
+                </div>
+                <div class="contentrow-box-lower">
+                        <span class="boxtimestamp">
+                            4天前
+                        </span>
+                        <span class="boxcomments">
+                            <span class="fa fa-heart"> 9</span>
+                            <span class="fa fa-comment"> 0</span>
+                        </span>
+                </div>
+                <div class="contentrow-box-add">
+                    <span><span class="fa fa-bookmark"></span> 交互设计</span>
+                    <span class="fire">684 <span class="fa fa-fire"></span></span>
+                </div>
+            </div><!--ContentBox END-->
+            <!--ContentRow Box 第1行第3个-->
+            <div class="contentrow-box">
+                <div class="contentrow-box-upper">
+                    <div class="contentrow-box-upper-img">
+                        <img src="images/p4.png" title="Busbud的清新手绘插画系列">
+                    </div>
+                    <p>Busbud的清新手绘插画系列</p>
+                </div>
+                <div class="contentrow-box-lower">
+                        <span class="boxtimestamp">
+                           5天前
+                        </span>
+                        <span class="boxcomments">
+                            <span class="fa fa-heart"> 5</span>
+                            <span class="fa fa-comment"> 0</span>
+                        </span>
+                </div>
+                <div class="contentrow-box-add">
+                    <span><span class="fa fa-bookmark"></span> 绘画艺术</span>
+                    <span class="fire">764 <span class="fa fa-fire"></span></span>
+                </div>
+            </div><!--ContentBox END-->
+            <!--ContentRow Box 第1行第4个-->
+            <div class="contentrow-box">
+                <div class="contentrow-box-upper">
+                    <div class="contentrow-box-upper-img">
+                        <img src="images/p5.jpg" title="充满趣味的儿童英文字母设计">
+                    </div>
+                    <p>充满趣味的儿童英文字母设计</p>
+                </div>
+                <div class="contentrow-box-lower">
+                        <span class="boxtimestamp">
+                            1周前
+                        </span>
+                        <span class="boxcomments">
+                            <span class="fa fa-heart"> 2</span>
+                            <span class="fa fa-comment"> 0</span>
+                        </span>
+                </div>
+                <div class="contentrow-box-add">
+                    <span><span class="fa fa-bookmark"></span> 平面设计</span>
+                    <span class="fire">813 <span class="fa fa-fire"></span></span>
+                </div>
+            </div><!--ContentBox END-->
+        </div><!--ContentRow END-->
+
+        <!--第二行-->
+        <div class="contentrow">
+            <!--ContentRow Box 第2行第1个-->
+            <div class="contentrow-box">
+                <div class="contentrow-box-upper">
+                    <div class="contentrow-box-upper-img">
+                        <img src="images/p6.jpg" title="2015牛奶摄影作品：超级英雄">
+                    </div>
+                    <p>2015牛奶摄影作品：超级英雄</p>
+                </div>
+                <div class="contentrow-box-lower">
+                        <span class="boxtimestamp">
+                            1周前
+                        </span>
+                        <span class="boxcomments">
+                            <span class="fa fa-heart"> 6</span>
+                            <span class="fa fa-comment"> 0</span>
+                        </span>
+                </div>
+                <div class="contentrow-box-add">
+                    <span><span class="fa fa-bookmark"></span> 摄影艺术</span>
+                    <span class="fire">870 <span class="fa fa-fire"></span></span>
+                </div>
+            </div><!--ContentBox END-->
+            <!--ContentRow Box 第2行第2个-->
+            <div class="contentrow-box">
+                <div class="contentrow-box-upper">
+                    <div class="contentrow-box-upper-img">
+                        <img src="images/p7.jpg" title="印章模型效果图PSD模板">
+                    </div>
+                    <p>印章模型效果图PSD模板</p>
+                </div>
+                <div class="contentrow-box-lower">
+                        <span class="boxtimestamp">
+                            4天前
+                        </span>
+                        <span class="boxcomments">
+                            <span class="fa fa-heart"> 6</span>
+                            <span class="fa fa-comment"> 0</span>
+                        </span>
+                </div>
+                <div class="contentrow-box-add">
+                    <span><span class="fa fa-bookmark"></span> PS资源 - 字体资源</span>
+                    <span class="fire">766 <span class="fa fa-fire"></span></span>
+                </div>
+            </div><!--ContentBox END-->
+            <!--ContentRow Box 第2行第3个-->
+            <div class="contentrow-box">
+                <div class="contentrow-box-upper">
+                    <div class="contentrow-box-upper-img">
+                        <img src="images/p8.jpg" title="18个励志名言的字体设计">
+                    </div>
+                    <p>18个励志名言的字体设计</p>
+                </div>
+                <div class="contentrow-box-lower">
+                        <span class="boxtimestamp">
+                           1周前
+                        </span>
+                        <span class="boxcomments">
+                            <span class="fa fa-heart"> 2</span>
+                            <span class="fa fa-comment"> 0</span>
+                        </span>
+                </div>
+                <div class="contentrow-box-add">
+                    <span><span class="fa fa-bookmark"></span> 平面设计</span>
+                    <span class="fire">509 <span class="fa fa-fire"></span></span>
+                </div>
+            </div><!--ContentBox END-->
+            <!--ContentRow Box 第2行第4个-->
+            <div class="contentrow-box">
+                <div class="contentrow-box-upper">
+                    <div class="contentrow-box-upper-img">
+                        <img src="images/p9.jpg" title="Numero China充满妙趣的化妆品摄影">
+                    </div>
+                    <p>Numero China充满妙趣的化妆品摄影</p>
+                </div>
+                <div class="contentrow-box-lower">
+                        <span class="boxtimestamp">
+                            1周前
+                        </span>
+                        <span class="boxcomments">
+                            <span class="fa fa-heart"> 2</span>
+                            <span class="fa fa-comment"> 0</span>
+                        </span>
+                </div>
+                <div class="contentrow-box-add">
+                    <span><span class="fa fa-bookmark"></span> 摄影艺术</span>
+                    <span class="fire">689 <span class="fa fa-fire"></span></span>
+                </div>
+            </div><!--ContentBox END-->
+        </div><!--ContentRow END-->
+
+        <!--第三行-->
+        <div class="contentrow">
+            <!--ContentRow Box 第3行第1个-->
+            <div class="contentrow-box">
+                <div class="contentrow-box-upper">
+                    <div class="contentrow-box-upper-img">
+                        <img src="images/p10.jpg" title="《宇宙和鸡蛋》三维设计">
+                    </div>
+                    <p>《宇宙和鸡蛋》三维设计</p>
+                </div>
+                <div class="contentrow-box-lower">
+                        <span class="boxtimestamp">
+                            2周前
+                        </span>
+                        <span class="boxcomments">
+                            <span class="fa fa-heart"> 8</span>
+                            <span class="fa fa-comment"> 1</span>
+                        </span>
+                </div>
+                <div class="contentrow-box-add">
+                    <span><span class="fa fa-bookmark"></span> 3D艺术</span>
+                    <span class="fire">931 <span class="fa fa-fire"></span></span>
+                </div>
+            </div><!--ContentBox END-->
+            <!--ContentRow Box 第3行第2个-->
+            <div class="contentrow-box">
+                <div class="contentrow-box-upper">
+                    <div class="contentrow-box-upper-img">
+                        <img src="images/p11.jpg" title="超现实自然物体的空间艺术">
+                    </div>
+                    <p>超现实自然物体的空间艺术</p>
+                </div>
+                <div class="contentrow-box-lower">
+                        <span class="boxtimestamp">
+                            4天前
+                        </span>
+                        <span class="boxcomments">
+                            <span class="fa fa-heart"> 4</span>
+                            <span class="fa fa-comment"> 0</span>
+                        </span>
+                </div>
+                <div class="contentrow-box-add">
+                    <span><span class="fa fa-bookmark"></span> 空间艺术</span>
+                    <span class="fire">1058 <span class="fa fa-fire"></span></span>
+                </div>
+            </div><!--ContentBox END-->
+            <!--ContentRow Box 第3行第3个-->
+            <div class="contentrow-box">
+                <div class="contentrow-box-upper">
+                    <div class="contentrow-box-upper-img">
+                        <img src="images/p12.jpg" title="古香古色的Nalewka艺术酒瓶包装设计">
+                    </div>
+                    <p>古香古色的Nalewka艺术酒瓶包装设计</p>
+                </div>
+                <div class="contentrow-box-lower">
+                        <span class="boxtimestamp">
+                           2周前
+                        </span>
+                        <span class="boxcomments">
+                            <span class="fa fa-heart"> 4</span>
+                            <span class="fa fa-comment"> 0</span>
+                        </span>
+                </div>
+                <div class="contentrow-box-add">
+                    <span><span class="fa fa-bookmark"></span> 平面设计</span>
+                    <span class="fire">884 <span class="fa fa-fire"></span></span>
+                </div>
+            </div><!--ContentBox END-->
+            <!--ContentRow Box 第3行第4个-->
+            <div class="contentrow-box">
+                <div class="contentrow-box-upper">
+                    <div class="contentrow-box-upper-img">
+                        <img src="images/p13.png" title="泰国Tetra Pak饮用水插画包装设计">
+                    </div>
+                    <p>泰国Tetra Pak饮用水插画包装设计</p>
+                </div>
+                <div class="contentrow-box-lower">
+                        <span class="boxtimestamp">
+                            3周前
+                        </span>
+                        <span class="boxcomments">
+                            <span class="fa fa-heart"> 4</span>
+                            <span class="fa fa-comment"> 0</span>
+                        </span>
+                </div>
+                <div class="contentrow-box-add">
+                    <span><span class="fa fa-bookmark"></span> 平面设计</span>
+                    <span class="fire">809 <span class="fa fa-fire"></span></span>
+                </div>
+            </div><!--ContentBox END-->
+        </div><!--ContentRow END-->
+        <!--Number Page数字翻页-->
+        <div class="numberpage">
+            <div class="numbers">1</div>
+            <div class="numbers">2</div>
+            <span>...</span>
+            <div class="numbers">10</div>
+            <div class="numbers"><span class="fa fa-chevron-right"></span></div>
+            <span>共10页</span>
+            <div class="enternumber">
+                <input type="text" value="1">
+                <div class="numbersgo">GO</div>
+            </div>
+        </div><!--NumberPage END-->
+
+        <!--Full Pic 8张图相册-->
+        <div class="fullpic">
+            <!--第一行-->
+            <div class="fullpicrow">
+                <!--第1行第1个-->
+                <div class="fullpic-box">
+                    <img src="images/s1.png" alt="">
+                    <div class="fullpic-box-layer">
+                        <div class="fullpic-box-toplay">
+                            <span class="fa fa-link"></span>
+                        </div>
+                        <div class="fullpic-box-botlay">
+                            <p>我们曾在田野里歌唱</p>
+                            <span class="boxtimestamp">4小时前</span>
+                                    <span class="boxcomments">
+                                        <span class="fa fa-heart-o"> 0</span>
+                                        <span class="fa fa-eye"> 3</span>
+                                        <span class="fa fa-comment-o"> 0</span>
+                                    </span>
+                        </div>
+
+                    </div><!--Layer END-->
+                </div><!--Box End-->
+                <!--第1行第2个-->
+                <div class="fullpic-box">
+                    <img src="images/s2.jpg" alt="">
+                    <div class="fullpic-box-layer">
+                        <div class="fullpic-box-toplay">
+                            <span class="fa fa-link"></span>
+                        </div>
+                        <div class="fullpic-box-botlay">
+                            <p>我们曾在田野里歌唱</p>
+                            <span class="boxtimestamp">4小时前</span>
+                                    <span class="boxcomments">
+                                        <span class="fa fa-heart-o"> 0</span>
+                                        <span class="fa fa-eye"> 3</span>
+                                        <span class="fa fa-comment-o"> 0</span>
+                                    </span>
+                        </div>
+                    </div><!--Layer END-->
+                </div><!--Box End-->
+                <!--第1行第3个-->
+                <div class="fullpic-box">
+                    <img src="images/s3.jpg" alt="">
+                    <div class="fullpic-box-layer">
+                        <div class="fullpic-box-toplay">
+                            <span class="fa fa-link"></span>
+                        </div>
+                        <div class="fullpic-box-botlay">
+                            <p>我们曾在田野里歌唱</p>
+                            <span class="boxtimestamp">4小时前</span>
+                                    <span class="boxcomments">
+                                        <span class="fa fa-heart-o"> 0</span>
+                                        <span class="fa fa-eye"> 3</span>
+                                        <span class="fa fa-comment-o"> 0</span>
+                                    </span>
+                        </div>
+                    </div><!--Layer END-->
+                </div><!--Box End-->
+                <!--第1行第4个-->
+                <div class="fullpic-box">
+                    <img src="images/s4.jpg" alt="">
+                    <div class="fullpic-box-layer">
+                        <div class="fullpic-box-toplay">
+                            <span class="fa fa-link"></span>
+                        </div>
+                        <div class="fullpic-box-botlay">
+                            <p>我们曾在田野里歌唱</p>
+                            <span class="boxtimestamp">4小时前</span>
+                                    <span class="boxcomments">
+                                        <span class="fa fa-heart-o"> 0</span>
+                                        <span class="fa fa-eye"> 3</span>
+                                        <span class="fa fa-comment-o"> 0</span>
+                                    </span>
+                        </div>
+                    </div><!--Layer END-->
+                </div><!--Box End-->
+            </div><!--Row END-->
+
+            <!--第二行-->
+            <div class="fullpicrow">
+                <!--第2行第1个-->
+                <div class="fullpic-box">
+                    <img src="images/s5.jpg" alt="">
+                    <div class="fullpic-box-layer">
+                        <div class="fullpic-box-toplay">
+                            <span class="fa fa-link"></span>
+                        </div>
+                        <div class="fullpic-box-botlay">
+                            <p>我们曾在田野里歌唱</p>
+                            <span class="boxtimestamp">4小时前</span>
+                                    <span class="boxcomments">
+                                        <span class="fa fa-heart-o"> 0</span>
+                                        <span class="fa fa-eye"> 3</span>
+                                        <span class="fa fa-comment-o"> 0</span>
+                                    </span>
+                        </div>
+
+                    </div><!--Layer END-->
+                </div><!--Box End-->
+                <!--第2行第2个-->
+                <div class="fullpic-box">
+                    <img src="images/s6.jpg" alt="">
+                    <div class="fullpic-box-layer">
+                        <div class="fullpic-box-toplay">
+                            <span class="fa fa-link"></span>
+                        </div>
+                        <div class="fullpic-box-botlay">
+                            <p>我们曾在田野里歌唱</p>
+                            <span class="boxtimestamp">4小时前</span>
+                                    <span class="boxcomments">
+                                        <span class="fa fa-heart-o"> 0</span>
+                                        <span class="fa fa-eye"> 3</span>
+                                        <span class="fa fa-comment-o"> 0</span>
+                                    </span>
+                        </div>
+                    </div><!--Layer END-->
+                </div><!--Box End-->
+                <!--第2行第3个-->
+                <div class="fullpic-box">
+                    <img src="images/s7.jpg" alt="">
+                    <div class="fullpic-box-layer">
+                        <div class="fullpic-box-toplay">
+                            <span class="fa fa-link"></span>
+                        </div>
+                        <div class="fullpic-box-botlay">
+                            <p>我们曾在田野里歌唱</p>
+                            <span class="boxtimestamp">4小时前</span>
+                                    <span class="boxcomments">
+                                        <span class="fa fa-heart-o"> 0</span>
+                                        <span class="fa fa-eye"> 3</span>
+                                        <span class="fa fa-comment-o"> 0</span>
+                                    </span>
+                        </div>
+                    </div><!--Layer END-->
+                </div><!--Box End-->
+                <!--第2行第4个-->
+                <div class="fullpic-box">
+                    <img src="images/s8.jpg" alt="">
+                    <div class="fullpic-box-layer">
+                        <div class="fullpic-box-toplay">
+                            <span class="fa fa-link"></span>
+                        </div>
+                        <div class="fullpic-box-botlay">
+                            <p>我们曾在田野里歌唱</p>
+                            <span class="boxtimestamp">4小时前</span>
+                                    <span class="boxcomments">
+                                        <span class="fa fa-heart-o"> 0</span>
+                                        <span class="fa fa-eye"> 3</span>
+                                        <span class="fa fa-comment-o"> 0</span>
+                                    </span>
+                        </div>
+                    </div><!--Layer END-->
+                </div><!--Box End-->
+            </div><!--Row END-->
+            <!--图库按钮-->
+            <div class="fullpicbtn">
+                取悦于灵感 - Love Inspiration
+                <span class="fa fa-chevron-circle-right"></span>
+            </div>
+        </div><!--Fullpic END-->
+
+        <!--探索，用户，情感-->
+        <div class="iconsrow">
+            <div class="iconsbox">
+                <div class="icon">
+                    <span class="fa fa-search"></span>
+                </div>
+                <h2>探索发现</h2>
+                <p>探索创造性的思维，发现引领最新的设计潮流</p>
+            </div>
+            <div class="iconsbox">
+                <div class="icon">
+                    <span class="fa fa-user"></span>
+                </div>
+                <h2>用户设计</h2>
+                <p>以用户为中心，以体验为至上，以细节为成败</p>
+            </div>
+            <div class="iconsbox">
+                <div class="icon">
+                    <span class="fa fa-paper-plane-o"></span>
+                </div>
+                <h2>情感传递</h2>
+                <p>不只是图文信息，更多的是喜怒哀乐的情感</p>
+            </div>
+        </div><!--IconsRow END-->
+
+        <!--底部4张广告图-->
+        <div class="adrow">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div><!--Adrow END-->
+        <!--Footer页脚-->
+        <div class="footer">
+            <div class="footer-left">
+                <h5>觉唯</h5>
+                <p>以用户为中心的设计理念，专注于用户体验设计，拥有国内外最新的设计潮流趋势、独特而美的创意视觉、新颖而灵敏的思维意识、极致而生动的交互体验，更有严谨而通俗的技术教程！
+                    <br/>唯然是觉唯网的图片分享社区，以记录美丽、分享美好的创意理念，分享高品质创意、艺术、设计、时尚、插画、摄影、唯美类精美图片。</p>
+            </div>
+            <div class="footer-col">
+                <h5>关于</h5>
+                <ul>
+                    <li>关于觉唯</li>
+                    <li>留言联系</li>
+                    <li>友情链接</li>
+                    <li>免责声明</li>
+                    <li>网站地图</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>栏目</h5>
+                <ul>
+                    <li>用户体验</li>
+                    <li>素材下载</li>
+                    <li>设计欣赏</li>
+                    <li>主题商店</li>
+                    <li>唯然灵感</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>友链</h5>
+                <ul>
+                    <li>前端观察</li>
+                    <li>设计达人</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>关注</h5>
+                <ul>
+                    <li>Email: javin@jiawin.com</li>
+                    <li>
+                        <input type="text" placeholder="请输入您的邮箱"><input type="button" value="订阅">
+                    </li>
+                    <li class="footer-share">
+                        <span class="fa fa-weibo"></span><span class="fa fa-tencent-weibo"></span><span
+                            class="fa fa-qq"></span><span class="fa fa-rss"></span><span class="fa fa-weixin"></span>
+                    </li>
+                </ul>
+            </div>
+            <div class="footercopyright">
+                <p>Copyright © 2012-2015 觉唯 Theme by Javin All All Rights Reserved. 粤ICP备12073831号-1br</p><span
+                    id="myname">黎龙 中的六合 2016.3.25</span>
+                <div id="oye">噢耶<br/>\(^o^)/</div>
+            </div>
+
+        </div><!--Footer END-->
+
+    </div><!--Content END-->
+
+    <div id="backtotop">
+        <span onclick="btta()" class="fa fa-angle-up"></span>
+    </div>
+
+</div><!--Wrapper END-->
+
+<script type="text/javascript">
+    window.onload = btnlight;                     //点亮第一个圈圈;
+    /*轮播实现*/
+    var switchbtn = document.getElementsByClassName("switch-icons");
+    var slidebox = document.getElementById("sliderow-slidecontent");
+    //点亮小圆圈
+    function btnlight() {
+        if (slidebox.style.marginLeft == "") {
+            slidebox.style.marginLeft = "0px";
+        }
+        for (var i = 0; i < switchbtn.length; i++) {
+            switchbtn[i].style.backgroundColor = "";
+        }
+        var num = parseInt(slidebox.style.marginLeft) / 620;
+        if (num < 0) {
+            num = -(num);
+        }
+        switchbtn[num].style.backgroundColor = "white";
+    }
+    //设置定时器保证轮播自动播放
+    var timer = setInterval(moveright, 3000);
+    //按左键
+    function moveleft() {
+        if (parseInt(slidebox.style.marginLeft) == 0) {
+            slidebox.style.webkitTransition = "all 0.1 linear"
+            slidebox.style.marginLeft = "-2480px";
+        }
+        else {
+            slidebox.style.webkitTransition = "all 0.4s linear";
+            slidebox.style.marginLeft = parseInt(slidebox.style.marginLeft) + 620 + "px";
+        }
+        btnlight();
+    }
+    //按右键 btnlight();
+    function moveright() {
+        if (parseInt(slidebox.style.marginLeft) == -2480) {
+            slidebox.style.webkitTransition = "all 0.1 linear"
+            slidebox.style.marginLeft = "0px";
+        }
+        else {
+            slidebox.style.webkitTransition = "all 0.4s linear";
+            slidebox.style.marginLeft = parseInt(slidebox.style.marginLeft) - 620 + "px";
+        }
+        btnlight();
+    }
+    //鼠标移入暂停播放
+    function pause() {
+        clearInterval(timer);
+        var ra = document.getElementById("slidebox-rightarrow");
+        var la = document.getElementById("slidebox-leftarrow");
+        la.style.left = "0px";
+        ra.style.left = "585px";
+    }
+    //鼠标移出重启自动播放
+    function restart() {
+        timer = window.setInterval(moveright, 3000);
+        var ra = document.getElementById("slidebox-rightarrow");
+        var la = document.getElementById("slidebox-leftarrow");
+        la.style.left = "-50px";
+        ra.style.left = "635px";
+    }
+    //点击小圆圈切换图片
+    function switchslide(no) {
+        var num = parseInt(no) * 620;
+        slidebox.style.marginLeft = (-num) + "px";
+        btnlight();
+    }
+    //搜索框JS
+    function searchbox() {       //点击放大镜显示搜索框
+        var search = document.getElementById("searchhidden");
+        search.setAttribute("id", "search");
+        var input = search.getElementsByTagName("input");
+        input[0].focus();
+        var ul = search.parentNode;
+        var ulli = ul.getElementsByTagName("li");
+        for (var i = 0; i < 7; i++) {
+            ulli[i].style.webkitTransition = "margin 0.3s linear";
+            ulli[i].style.marginRight = "0px";
+        }
+    }
+    function searchboxblur() {       //退出焦点收起搜索框
+        var search = document.getElementById("search");
+        search.setAttribute("id", "searchhidden");
+        var ul = search.parentNode;
+        var ulli = ul.getElementsByTagName("li");
+        for (var i = 0; i < 7; i++) {
+            ulli[i].style.webkitTransition = "margin 0.3s linear";
+            ulli[i].style.marginRight = "";
+        }
+    }
+    //登录注册JS
+    function formpopup(Obj){        //点击登陆/注册跳出框
+        var getform = document.getElementById("login-reg-form");
+        var loginpage = document.getElementById("loginpage");
+        var regpage = document.getElementById("regpage");
+        var closebtn = document.getElementById("closebtn");
+        getform.style.display="block";
+        btta();
+//        需要显示的页
+        var needshowpage = loginpage;
+//        需要被覆盖的页
+        var needcoverpage = regpage;
+        if(Obj.id=="form1"){//按的是登录键，需跳出登录框
+            needshowpage = loginpage;
+            needcoverpage = regpage;
+            getform.style.height="500px";
+            needcoverpage.style.webkitTransform="rotateY(-180deg)";
+        }else if(Obj.id =="form2"){ //按的是注册键，需跳出注册框
+            needshowpage = regpage;
+            needcoverpage = loginpage;
+            needcoverpage.style.webkitTransform="rotateY(180deg)";
+        }
+        needcoverpage.style.display="block";
+        needshowpage.style.display="block";
+        needshowpage.style.zIndex="100";
+        needshowpage.style.webkitTransform="rotateY(0deg)";
+        needcoverpage.style.zIndex="99";
+        getform.style.top="30px";
+        var cover = document.getElementById("cover");
+        cover.style.visibility="visible";
+        cover.style.height="2796px";
+        cover.style.width="100%";
+        cover.style.backgroundColor="rgba(0,0,0,0.8)";
+        cover.style.zIndex="90";
+
+        //旧代码
+//        if(Obj.id=="form1"){        //按的是登录键，需跳出登录框
+////            alert(1);
+////            regpage.style.webkitTransform="rotateY(90deg)";
+//			btta();
+//            getform.style.height="500px";
+//            regpage.style.display="block";
+////            regpage.style.visibility="hidden";
+//            loginpage.style.display="block";
+//            loginpage.style.zIndex="100";
+//            loginpage.style.webkitTransform="rotateY(0deg)";
+//            regpage.style.webkitTransform="rotateY(-180deg)";
+//            regpage.style.zIndex="99";
+//
+//        }else if(Obj.id=="form2"){  //按的是注册键，需跳出注册框
+////            loginpage.style.webkitTransform="rotateY(90deg)";
+//			btta();
+//            getform.style.height="600px";
+//            loginpage.style.display="block";
+//            regpage.style.display="block";
+//            regpage.style.zIndex="100";
+//            regpage.style.webkitTransform="rotateY(0deg)";
+//            loginpage.style.webkitTransform="rotateY(180deg)";
+//            loginpage.style.zIndex="99";
+//
+//        }
+
+    }
+    function closeform(){       //关闭登录/注册框
+        var getform = document.getElementById("login-reg-form");
+        var loginpage = document.getElementById("loginpage");
+        var regpage = document.getElementById("regpage");
+        var cover = document.getElementById("cover");
+        cover.style.backgroundColor="rgba(0,0,0,0)";
+        cover.style.visibility="hidden"
+        loginpage.style.display="none";
+        regpage.style.display="none";
+        getform.style.top="-800px";
+    }
+
+
+    //切换登录/注册框JS
+    function switchlog(Obj){
+        var getform = document.getElementById("login-reg-form");
+        var loginpage = document.getElementById("loginpage");
+        var regpage = document.getElementById("regpage");
+//        当前正在显示的页面
+        var pagenow = Obj.parentNode;
+//        即将要显示的页
+        var pagego=loginpage;
+        if(pagenow.id==loginpage.id){ //当前在登录页，切换注册页
+            pagego=regpage;
+            getform.style.height="580px";
+        }else if(pagenow.id==regpage.id){ //当前在注册页，切换登录页
+            pagego=loginpage;
+            getform.style.height="500px";
+        }
+        pagenow.style.webkitTransition="all .5s linear";
+        pagego.style.webkitTransition="all .5s linear";
+        pagenow.style.webkitTransform="rotateY(-180deg)";
+        pagenow.style.zIndex="99";
+        pagego.style.zIndex="100";
+//            regpage.style.display="block";
+        pagego.style.webkitTransform="rotateY(0deg)";
+
+        //旧代码
+//        page.style.display="none";
+//        if(page.id==loginpage.id){      //当前在登录页，切换注册页
+//            getform.style.height="600px";
+//            loginpage.style.webkitTransition="all .5s linear";
+//            regpage.style.webkitTransition="all .5s linear";
+//            loginpage.style.webkitTransform="rotateY(-180deg)";
+//            loginpage.style.zIndex="99";
+//            regpage.style.zIndex="100";
+////            regpage.style.display="block";
+//            regpage.style.webkitTransform="rotateY(0deg)";
+//        }else if(page.id==regpage.id){      //当前在注册页，切换登录页
+//
+//            loginpage.style.webkitTransition="all 0.5s linear";
+//            regpage.style.webkitTransition="all 0.5s linear";
+//            regpage.style.webkitTransform="rotateY(-180deg)";
+//            loginpage.style.webkitTransform="rotateY(0deg)";
+//            regpage.style.zIndex="99";
+//            loginpage.style.zIndex="100";
+//            getform.style.height="500px";
+////            loginpage.style.display="block";
+//
+//        }
+
+    }
+    //滚动条滚动改变的元素
+    function scrollshow() {
+        var nav = document.getElementById("nav");
+        var submenu = document.getElementById("submenu");
+        var subli = submenu.getElementsByTagName("li");
+        if (window.scrollY > 200) {
+            nav.style.backgroundColor = "#323232"
+            for (var i = 0; i < subli.length; i++) {
+                subli[i].style.backgroundColor = "#323232";
+            }
+        }
+        else {
+            nav.style.backgroundColor = "rgba(0,0,0,0.5)"
+            for (var i = 0; i < subli.length; i++) {
+                subli[i].style.backgroundColor = "rgba(0,0,0,0.5)";
+            }
+        }
+        //回到顶部是否显示
+        var backtop = document.getElementById("backtotop");
+        if (window.scrollY > 0) {
+            backtop.style.opacity = 1;
+        }
+        else {
+            backtop.style.opacity = 0;
+        }
+    }
+    //回到顶部js
+    var a;
+    function btta() {
+        a = setInterval(backtop, 1)
+    }
+    function backtop() {
+        if (window.scrollY == 0) {
+            clearInterval(a);
+        }
+        else {
+            scrollTo(0, window.scrollY - 20);
+        }
+    }
+
+</script>
+</body>
+</html>
